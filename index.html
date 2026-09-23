@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>De Olho no Paebes - D085_M: Interpretação Geométrica da Reta</title>
+    <title>De Olho no Paebes - D085_M: Quiz com Relatório Diagnóstico</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -36,6 +36,38 @@
             margin: 0;
             font-size: 0.95em;
         }
+
+        /* Tela de Identificação */
+        #identification-screen {
+            background-color: #fafafa;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #184c78;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .form-control:focus {
+            border-color: #184c78;
+            outline: none;
+        }
+
+        /* Barra de Progresso */
         .progress-bar-container {
             width: 100%;
             background-color: #e0e0e0;
@@ -43,6 +75,7 @@
             height: 10px;
             margin-bottom: 25px;
             overflow: hidden;
+            display: none;
         }
         .progress-bar {
             height: 100%;
@@ -50,6 +83,8 @@
             background-color: #184c78;
             transition: width 0.3s ease;
         }
+
+        /* Questões */
         .question-card {
             display: none;
             border: 1px solid #dcdcdc;
@@ -144,14 +179,15 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
+        /* Botões */
         .button-group {
             display: flex;
             gap: 15px;
             margin-top: 20px;
         }
         .btn {
-            flex: 1;
-            padding: 14px;
+            padding: 14px 20px;
             font-size: 1em;
             font-weight: bold;
             border: none;
@@ -160,20 +196,30 @@
             transition: background 0.2s ease;
             text-align: center;
         }
-        .btn-check {
+        .btn-start {
+            width: 100%;
             background-color: #184c78;
             color: white;
         }
-        .btn-check:hover {
-            background-color: #103352;
+        .btn-check {
+            flex: 1;
+            background-color: #184c78;
+            color: white;
         }
         .btn-next {
+            flex: 1;
             background-color: #28a745;
             color: white;
             display: none;
         }
-        .btn-next:hover {
-            background-color: #1e7e34;
+        .btn-pdf {
+            background-color: #d9534f;
+            color: white;
+            margin-right: 10px;
+        }
+        .btn-restart {
+            background-color: #184c78;
+            color: white;
         }
         .alert-msg {
             color: #d9534f;
@@ -182,29 +228,68 @@
             margin-top: 10px;
             display: none;
         }
+
+        /* Relatório de Resultados */
         #results-screen {
             display: none;
-            text-align: center;
-            padding: 30px 20px;
+        }
+        .student-summary-box {
+            background-color: #eef6fc;
+            border: 2px solid #184c78;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 25px;
+            font-size: 1.05em;
+            line-height: 1.6;
         }
         .score-box {
-            font-size: 2.8em;
+            font-size: 2.5em;
             font-weight: bold;
             color: #28a745;
-            margin: 20px 0;
+            text-align: center;
+            margin: 15px 0;
         }
-        .btn-restart {
-            background-color: #184c78;
-            color: white;
-            padding: 14px 28px;
-            font-size: 1em;
-            font-weight: bold;
-            border: none;
+        .improvement-box {
+            background-color: #fff8e6;
+            border: 2px solid #ffe08a;
             border-radius: 8px;
-            cursor: pointer;
+            padding: 20px;
+            margin-bottom: 25px;
         }
-        .btn-restart:hover {
-            background-color: #103352;
+        .improvement-box h3 {
+            color: #8a6d3b;
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        .improvement-list {
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+        .improvement-list li {
+            margin-bottom: 12px;
+        }
+
+        /* Estilos de Impressão (PDF) */
+        @media print {
+            body {
+                background-color: #ffffff;
+                color: #000000;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .btn, .button-group, .progress-bar-container, .alert-msg, #identification-screen {
+                display: none !important;
+            }
+            .question-card {
+                display: none !important;
+            }
+            #results-screen {
+                display: block !important;
+            }
         }
     </style>
 </head>
@@ -216,13 +301,37 @@
         <p><strong>Descritor D085_M:</strong> Interpretar geometricamente os coeficientes da equação de uma reta.</p>
     </div>
 
+    <!-- TELA DE IDENTIFICAÇÃO DO ALUNO -->
+    <div id="identification-screen">
+        <h2 style="color: #184c78; margin-top: 0;">Identificação do Estudante</h2>
+        <p style="color: #666; margin-bottom: 20px;">Preencha seus dados abaixo para iniciar a avaliação do Descritor D085_M:</p>
+        
+        <div class="form-group">
+            <label for="student-name">Nome Completo do Aluno:</label>
+            <input type="text" id="student-name" class="form-control" placeholder="Digite seu nome completo...">
+        </div>
+
+        <div class="form-group">
+            <label for="student-class">Turma:</label>
+            <select id="student-class" class="form-control">
+                <option value="">-- Selecione sua turma --</option>
+                <option value="3M1">3M1</option>
+                <option value="3M2">3M2</option>
+                <option value="3M3">3M3</option>
+            </select>
+        </div>
+
+        <div id="id-alert" class="alert-msg">Por favor, preencha seu nome e selecione a turma para continuar.</div>
+        <button class="btn btn-start" onclick="iniciarQuiz()">Iniciar Quiz &rarr;</button>
+    </div>
+
     <!-- Barra de Progresso -->
     <div class="progress-bar-container" id="progress-container">
         <div class="progress-bar" id="progress-bar"></div>
     </div>
 
     <!-- ITEM 1 -->
-    <div class="question-card active" id="card-1">
+    <div class="question-card" id="card-1">
         <div class="item-tag">ITEM 1 - (AMA 2024 - 3ª ed. - M00087459)</div>
         <div class="question-text">
             Jonas estava lendo uma reportagem quando se deparou com um gráfico que apresentava uma reta conforme abaixo. Ele sentiu falta de alguns dados, mas, analisando a reta apresentada, concluiu que a equação reduzida dessa reta é dada por <i>y = mx + n</i>. Por isso, Jonas deduziu algumas características sobre os coeficientes <i>m</i> e <i>n</i>.
@@ -344,7 +453,6 @@
 
         <div class="graph-container" style="overflow-x: auto;">
             <svg width="650" height="150" viewBox="0 0 650 150">
-                <!-- Carta I -->
                 <g transform="translate(10,10)">
                     <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
                     <line x1="10" y1="60" x2="105" y2="60" stroke="#333" stroke-width="1"/>
@@ -353,7 +461,6 @@
                     <line x1="15" y1="20" x2="95" y2="90" stroke="#184c78" stroke-width="2"/>
                     <text x="55" y="115" font-weight="bold" font-size="12">I</text>
                 </g>
-                <!-- Carta II -->
                 <g transform="translate(135,10)">
                     <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
                     <line x1="10" y1="60" x2="105" y2="60" stroke="#333" stroke-width="1"/>
@@ -362,7 +469,6 @@
                     <line x1="15" y1="15" x2="95" y2="85" stroke="#184c78" stroke-width="2"/>
                     <text x="55" y="115" font-weight="bold" font-size="12">II</text>
                 </g>
-                <!-- Carta III -->
                 <g transform="translate(260,10)">
                     <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
                     <line x1="10" y1="50" x2="105" y2="50" stroke="#333" stroke-width="1"/>
@@ -371,7 +477,6 @@
                     <line x1="15" y1="85" x2="95" y2="15" stroke="#184c78" stroke-width="2"/>
                     <text x="52" y="115" font-weight="bold" font-size="12">III</text>
                 </g>
-                <!-- Carta IV -->
                 <g transform="translate(385,10)">
                     <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
                     <line x1="10" y1="70" x2="105" y2="70" stroke="#333" stroke-width="1"/>
@@ -380,7 +485,6 @@
                     <line x1="10" y1="40" x2="105" y2="40" stroke="#184c78" stroke-width="2"/>
                     <text x="52" y="115" font-weight="bold" font-size="12">IV</text>
                 </g>
-                <!-- Carta V -->
                 <g transform="translate(510,10)">
                     <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
                     <line x1="10" y1="70" x2="105" y2="70" stroke="#333" stroke-width="1"/>
@@ -462,7 +566,7 @@
         </div>
     </div>
 
-    <!-- ITEM 5 (FOTOGRAFIA EXATA DA IMAGEM ITEM 5.JPG) -->
+    <!-- ITEM 5 -->
     <div class="question-card" id="card-5">
         <div class="item-tag">ITEM 5 - (AMA 2024 - 3ª ed. - M00087461)</div>
         <div class="question-text">
@@ -471,35 +575,28 @@
 
         <div class="graph-container">
             <svg class="svg-graph" width="280" height="250" viewBox="0 0 280 250">
-                <!-- Eixo x -->
                 <line x1="20" y1="140" x2="260" y2="140" stroke="#333" stroke-width="1.5"/>
                 <polygon points="260,137 266,140 260,143" fill="#333"/>
                 <text x="268" y="144" font-size="12" font-weight="bold">x</text>
 
-                <!-- Eixo y -->
                 <line x1="100" y1="230" x2="100" y2="20" stroke="#333" stroke-width="1.5"/>
                 <polygon points="97,20 100,14 103,20" fill="#333"/>
                 <text x="94" y="14" font-size="12" font-weight="bold">y</text>
 
                 <text x="86" y="153" font-size="12">0</text>
 
-                <!-- Reta r passando exatamente por (100, 190) [-2 em y] e por (150, 140) [1 em x] -->
                 <line x1="50" y1="240" x2="220" y2="70" stroke="#184c78" stroke-width="2.5"/>
                 <text x="225" y="68" font-weight="bold" font-size="15" fill="#184c78">r</text>
 
-                <!-- Ponto no eixo y: -2 -->
                 <circle cx="100" cy="190" r="4.5" fill="#d9534f"/>
                 <text x="72" y="194" font-size="13" font-weight="bold" fill="#d9534f">-2</text>
 
-                <!-- Ponto no eixo x: 1 -->
                 <circle cx="150" cy="140" r="4.5" fill="#d9534f"/>
                 <text x="148" y="160" font-size="13" font-weight="bold" fill="#d9534f">1</text>
 
-                <!-- Arco e texto do Ângulo de 60° no eixo x (no ponto 1, entre eixo x e reta r) -->
                 <path d="M 175 140 A 25 25 0 0 0 168 122" fill="none" stroke="#333" stroke-width="1.5"/>
                 <text x="176" y="128" font-size="12" font-weight="bold">60°</text>
 
-                <!-- Arco e texto do Ângulo de 30° no eixo y (no ponto -2, entre o eixo y acima de -2 e a reta r que sobe) -->
                 <path d="M 100 165 A 25 25 0 0 1 118 172" fill="none" stroke="#333" stroke-width="1.5"/>
                 <text x="108" y="162" font-size="12">30°</text>
             </svg>
@@ -518,24 +615,93 @@
         <div id="alert-5" class="alert-msg">Por favor, selecione uma alternativa antes de verificar.</div>
         <div class="feedback" id="feedback-5"></div>
         <div class="button-group">
-            <button class="btn btn-check" id="btn-check-5" onclick="verificarResposta(5, 'E', 'O coeficiente linear n é o valor da coordenada y no ponto em que a reta r cruza o eixo vertical (0, -2), ou seja, n = -2. O coeficiente angular m corresponde à tangente do ângulo de inclinação de 60° que a reta forma com o eixo x, isto é, m = tg 60º. Portanto, nessa ordem (linear e angular), os valores são -2 e tg 60º (Alternativa e).')">Verificar Resposta</button>
+            <button class="btn btn-check" id="btn-check-5" onclick="verificarResposta(5, 'E', 'O coeficiente linear n é a coordenada y no ponto em que a reta r cruza o eixo vertical (0, -2), ou seja, n = -2. O coeficiente angular m corresponde à tangente do ângulo de inclinação de 60° com o eixo x, isto é, m = tg 60º. Portanto, nessa ordem (linear e angular), os valores são -2 e tg 60º (Alternativa e).')">Verificar Resposta</button>
             <button class="btn btn-next" id="btn-next-5" onclick="proximaQuestao(5)">Ver Resultado Final &rarr;</button>
         </div>
     </div>
 
-    <!-- TELA DE RESULTADOS -->
+    <!-- TELA DE RESULTADOS E RELATÓRIO DIAGNÓSTICO -->
     <div id="results-screen">
-        <h2>Parabéns por concluir o Quiz!</h2>
-        <p>Confira o seu desempenho nas questões do descritor D085_M:</p>
+        <h2 style="color: #184c78; text-align: center;">Relatório Diagnóstico do Desempenho</h2>
+        
+        <div class="student-summary-box">
+            <div><strong>Estudante:</strong> <span id="res-student-name"></span></div>
+            <div><strong>Turma:</strong> <span id="res-student-class"></span></div>
+            <div><strong>Data da Avaliação:</strong> <span id="res-date"></span></div>
+        </div>
+
         <div class="score-box" id="final-score">0 / 5</div>
-        <p id="score-percentage" style="font-size: 1.1em; color: #555; margin-bottom: 25px;"></p>
-        <button class="btn-restart" onclick="reiniciarQuiz()">Refazer Quiz</button>
+        <p id="score-percentage" style="text-align: center; font-size: 1.1em; color: #555; margin-bottom: 25px;"></p>
+
+        <!-- CAIXA DE ASSUNTOS A MELHORAR (Exibida dinamicamente caso existam erros) -->
+        <div class="improvement-box" id="improvement-container">
+            <h3><span style="font-size: 1.2em;">⚠️</span> Diagnóstico: Assuntos a Melhorar</h3>
+            <p>Com base nos seus erros nesta avaliação, recomendamos que você reforce o estudo dos seguintes tópicos do Descritor D085_M:</p>
+            <ul class="improvement-list" id="improvement-list">
+                <!-- Lista preenchida via JS -->
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn btn-pdf" onclick="salvarRelatorioPDF()">📄 Salvar Relatório em PDF</button>
+            <button class="btn btn-restart" onclick="reiniciarQuiz()">Refazer Quiz</button>
+        </div>
     </div>
 </div>
 
 <script>
+    let alunoNome = "";
+    let alunoTurma = "";
     let pontuacao = 0;
     const totalQuestoes = 5;
+    const errosAluno = [];
+
+    // Mapeamento dos assuntos a melhorar por item
+    const assuntosMap = {
+        1: {
+            titulo: "Item 1 — Sinais dos Coeficientes m e n em Reta Decrescente",
+            reforco: "Revisar o comportamento de retas inclinadas para baixo (coeficiente angular m < 0) e pontos de corte no eixo y acima da origem (coeficiente linear n > 0)."
+        },
+        2: {
+            titulo: "Item 2 — Associação entre Equação Reduzida e Representação Gráfica",
+            reforco: "Praticar a identificação da reta no plano cartesiano a partir de seus coeficientes dadas as condições m < 0 e n > 0."
+        },
+        3: {
+            titulo: "Item 3 — Retas Crescentes com Intercepto y Negativo",
+            reforco: "Reforçar a leitura de gráficos para retas com inclinação crescente (m > 0) que cruzam o eixo vertical y na região negativa (n < 0)."
+        },
+        4: {
+            titulo: "Item 4 — Comparação Relativa dos Coeficientes entre Duas Retas",
+            reforco: "Aprimorar a comparação visual das posições dos eixos e inclinações entre duas retas r e s no mesmo sistema de coordenadas."
+        },
+        5: {
+            titulo: "Item 5 — Coeficientes Linear e Angular via Tangente do Ângulo",
+            reforco: "Estudar a determinação do coeficiente linear (n = -2) como o ponto de corte no eixo y e do coeficiente angular m como a tangente do ângulo de inclinação em relação ao eixo x (m = tg 60º)."
+        }
+    };
+
+    function iniciarQuiz() {
+        const nameInput = document.getElementById('student-name').value.trim();
+        const classSelect = document.getElementById('student-class').value;
+        const alertDiv = document.getElementById('id-alert');
+
+        if (!nameInput || !classSelect) {
+            alertDiv.style.display = 'block';
+            return;
+        }
+
+        alertDiv.style.display = 'none';
+        alunoNome = nameInput;
+        alunoTurma = classSelect;
+
+        // Ocultar tela de identificação
+        document.getElementById('identification-screen').style.display = 'none';
+
+        // Exibir barra de progresso e primeira questão
+        document.getElementById('progress-container').style.display = 'block';
+        document.getElementById('progress-bar').style.width = '20%';
+        document.getElementById('card-1').classList.add('active');
+    }
 
     function verificarResposta(qNum, respostaCorreta, explicacao) {
         const radios = document.getElementsByName('q' + qNum);
@@ -568,6 +734,7 @@
             feedbackDiv.className = 'feedback correct';
             feedbackDiv.innerHTML = '<strong>&check; Resposta Correta!</strong><br>' + explicacao;
         } else {
+            errosAluno.push(qNum);
             feedbackDiv.className = 'feedback incorrect';
             feedbackDiv.innerHTML = '<strong>&cross; Incorreto.</strong> A alternativa correta é a <strong>' + respostaCorreta + '</strong>.<br><em>Explicação:</em> ' + explicacao;
         }
@@ -585,17 +752,57 @@
             const pct = (proxima / totalQuestoes) * 100;
             document.getElementById('progress-bar').style.width = pct + '%';
         } else {
-            document.getElementById('progress-container').style.display = 'none';
-            const resultsScreen = document.getElementById('results-screen');
-            resultsScreen.style.display = 'block';
-            document.getElementById('final-score').innerText = pontuacao + ' / ' + totalQuestoes;
-            const pctFinal = Math.round((pontuacao / totalQuestoes) * 100);
-            document.getElementById('score-percentage').innerText = 'Você acertou ' + pctFinal + '% do quiz.';
+            exibirResultados();
         }
+    }
+
+    function exibirResultados() {
+        document.getElementById('progress-container').style.display = 'none';
+        
+        // Preencher dados do aluno
+        document.getElementById('res-student-name').innerText = alunoNome;
+        document.getElementById('res-student-class').innerText = alunoTurma;
+        
+        const dataAtual = new Date();
+        document.getElementById('res-date').innerText = dataAtual.toLocaleDateString('pt-BR') + ' às ' + dataAtual.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+        document.getElementById('final-score').innerText = pontuacao + ' / ' + totalQuestoes;
+        const pctFinal = Math.round((pontuacao / totalQuestoes) * 100);
+        document.getElementById('score-percentage').innerText = 'Aproveitamento: ' + pctFinal + '% de acertos.';
+
+        // Gerar diagnóstico de erros
+        const improvementContainer = document.getElementById('improvement-container');
+        const improvementList = document.getElementById('improvement-list');
+        improvementList.innerHTML = '';
+
+        if (errosAluno.length > 0) {
+            improvementContainer.style.display = 'block';
+            errosAluno.forEach(qNum => {
+                const itemData = assuntosMap[qNum];
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${itemData.titulo}:</strong> ${itemData.reforco}`;
+                improvementList.appendChild(li);
+            });
+        } else {
+            // Se não houver erros
+            improvementContainer.style.display = 'block';
+            improvementContainer.style.backgroundColor = '#d4edda';
+            improvementContainer.style.borderColor = '#c3e6cb';
+            improvementContainer.innerHTML = '<h3>🎉 Excelente Desempenho!</h3><p style="color: #155724; margin: 0;">Você acertou todas as questões e demonstrou domínio completo dos conceitos de coeficiente angular, linear e interpretação de retas do Descritor D085_M!</p>';
+        }
+
+        document.getElementById('results-screen').style.display = 'block';
+    }
+
+    function salvarRelatorioPDF() {
+        window.print();
     }
 
     function reiniciarQuiz() {
         pontuacao = 0;
+        errosAluno.length = 0;
+
+        // Resetar Formulários
         for (let i = 1; i <= totalQuestoes; i++) {
             const radios = document.getElementsByName('q' + i);
             for (const r of radios) {
@@ -609,10 +816,9 @@
             document.getElementById('card-' + i).classList.remove('active');
         }
 
-        document.getElementById('card-1').classList.add('active');
-        document.getElementById('progress-container').style.display = 'block';
-        document.getElementById('progress-bar').style.width = '20%';
+        // Voltar para a Tela de Identificação
         document.getElementById('results-screen').style.display = 'none';
+        document.getElementById('identification-screen').style.display = 'block';
     }
 </script>
 
