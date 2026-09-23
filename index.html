@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De Olho no Paebes - D085_M: Interpretação Geométrica da Reta</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #184c78;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: #184c78;
+            margin: 0 0 5px 0;
+            font-size: 1.8em;
+        }
+        .header p {
+            color: #555;
+            margin: 0;
+            font-size: 0.95em;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 20%;
+            background-color: #184c78;
+            transition: width 0.3s ease;
+        }
+        .question-card {
+            display: none;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            padding: 25px;
+            background-color: #fafafa;
+        }
+        .question-card.active {
+            display: block;
+        }
+        .item-tag {
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #184c78;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            font-size: 1.05em;
+            line-height: 1.6;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .graph-container {
+            text-align: center;
+            margin: 15px 0 20px 0;
+            background: #ffffff;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .svg-graph {
+            max-width: 100%;
+            height: auto;
+        }
+        .grid-options-graphs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .grid-option-item {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+            background: #fff;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+        .options li {
+            margin-bottom: 12px;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1em;
+        }
+        .options label:hover {
+            background: #eef6fc;
+            border-color: #184c78;
+        }
+        .options input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #184c78;
+            transform: scale(1.2);
+        }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            text-align: center;
+        }
+        .btn-check {
+            background-color: #184c78;
+            color: white;
+        }
+        .btn-check:hover {
+            background-color: #103352;
+        }
+        .btn-next {
+            background-color: #28a745;
+            color: white;
+            display: none;
+        }
+        .btn-next:hover {
+            background-color: #1e7e34;
+        }
+        .alert-msg {
+            color: #d9534f;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+        #results-screen {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .score-box {
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #28a745;
+            margin: 20px 0;
+        }
+        .btn-restart {
+            background-color: #184c78;
+            color: white;
+            padding: 14px 28px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-restart:hover {
+            background-color: #103352;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>De Olho no Paebes — Caderno de Atividades</h1>
+        <p><strong>Descritor D085_M:</strong> Interpretar geometricamente os coeficientes da equação de uma reta.</p>
+    </div>
+
+    <!-- Barra de Progresso -->
+    <div class="progress-bar-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- ITEM 1 -->
+    <div class="question-card active" id="card-1">
+        <div class="item-tag">ITEM 1 - (AMA 2024 - 3ª ed. - M00087459)</div>
+        <div class="question-text">
+            Jonas estava lendo uma reportagem quando se deparou com um gráfico que apresentava uma reta conforme abaixo. Ele sentiu falta de alguns dados, mas, analisando a reta apresentada, concluiu que a equação reduzida dessa reta é dada por <i>y = mx + n</i>. Por isso, Jonas deduziu algumas características sobre os coeficientes <i>m</i> e <i>n</i>.
+        </div>
+        <div class="graph-container">
+            <svg class="svg-graph" width="260" height="200" viewBox="0 0 260 200">
+                <line x1="30" y1="130" x2="230" y2="130" stroke="#333" stroke-width="2"/>
+                <polygon points="230,126 238,130 230,134" fill="#333"/>
+                <text x="242" y="134" font-size="14" font-weight="bold">x</text>
+
+                <line x1="90" y1="180" x2="90" y2="20" stroke="#333" stroke-width="2"/>
+                <polygon points="86,20 90,12 94,20" fill="#333"/>
+                <text x="82" y="12" font-size="14" font-weight="bold">y</text>
+
+                <text x="78" y="145" font-size="14">0</text>
+                <line x1="40" y1="30" x2="190" y2="170" stroke="#184c78" stroke-width="3"/>
+            </svg>
+        </div>
+        <div class="question-text">
+            Quais características da reta Jonas pôde deduzir a partir do gráfico apresentado?
+        </div>
+        <ul class="options">
+            <li><label><input type="radio" name="q1" value="A"> A) m &gt; 0 e n &gt; 0.</label></li>
+            <li><label><input type="radio" name="q1" value="B"> B) m &lt; 0 e n &gt; 0.</label></li>
+            <li><label><input type="radio" name="q1" value="C"> C) m &lt; 0 e n &lt; 0.</label></li>
+            <li><label><input type="radio" name="q1" value="D"> D) m &gt; 0 e n &lt; 0.</label></li>
+            <li><label><input type="radio" name="q1" value="E"> E) m = 0 e n &gt; 0.</label></li>
+        </ul>
+        <div id="alert-1" class="alert-msg">Por favor, selecione uma alternativa antes de verificar.</div>
+        <div class="feedback" id="feedback-1"></div>
+        <div class="button-group">
+            <button class="btn btn-check" id="btn-check-1" onclick="verificarResposta(1, 'B', 'A reta é decrescente, logo o coeficiente angular é negativo (m < 0). Ela cruza o eixo vertical y acima da origem (0,0), portanto o coeficiente linear é positivo (n > 0).')">Verificar Resposta</button>
+            <button class="btn btn-next" id="btn-next-1" onclick="proximaQuestao(1)">Próxima Questão &rarr;</button>
+        </div>
+    </div>
+
+    <!-- ITEM 2 -->
+    <div class="question-card" id="card-2">
+        <div class="item-tag">ITEM 2 - (AMA 2023 - 3ª ed. - M025018)</div>
+        <div class="question-text">
+            Observe, no quadro abaixo, a equação de uma reta pertencente a um sistema de coordenadas reais <i>xy</i>, em que <i>m &lt; 0</i> e <i>n &gt; 0</i>.
+        </div>
+        <div style="text-align: center; margin: 10px 0; padding: 10px; background: #eef4f8; border-radius: 6px; font-weight: bold; font-size: 1.1em;">
+            y = mx + n &nbsp;&nbsp;&nbsp;&nbsp; (com m &lt; 0 e n &gt; 0)
+        </div>
+        <div class="question-text">
+            Uma reta que pode representar essa equação está apresentada em:
+        </div>
+
+        <div class="grid-options-graphs">
+            <div class="grid-option-item">
+                <strong>A)</strong><br>
+                <svg width="110" height="90" viewBox="0 0 120 100">
+                    <line x1="10" y1="60" x2="110" y2="60" stroke="#333" stroke-width="1.5"/>
+                    <line x1="60" y1="90" x2="60" y2="10" stroke="#333" stroke-width="1.5"/>
+                    <text x="52" y="68" font-size="10">0</text><text x="112" y="63" font-size="10">x</text><text x="58" y="9" font-size="10">y</text>
+                    <line x1="15" y1="20" x2="95" y2="90" stroke="#184c78" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="grid-option-item">
+                <strong>B)</strong><br>
+                <svg width="110" height="90" viewBox="0 0 120 100">
+                    <line x1="10" y1="60" x2="110" y2="60" stroke="#333" stroke-width="1.5"/>
+                    <line x1="60" y1="90" x2="60" y2="10" stroke="#333" stroke-width="1.5"/>
+                    <text x="52" y="68" font-size="10">0</text><text x="112" y="63" font-size="10">x</text><text x="58" y="9" font-size="10">y</text>
+                    <line x1="15" y1="85" x2="95" y2="15" stroke="#184c78" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="grid-option-item">
+                <strong>C)</strong><br>
+                <svg width="110" height="90" viewBox="0 0 120 100">
+                    <line x1="10" y1="50" x2="110" y2="50" stroke="#333" stroke-width="1.5"/>
+                    <line x1="50" y1="90" x2="50" y2="10" stroke="#333" stroke-width="1.5"/>
+                    <text x="42" y="58" font-size="10">0</text><text x="112" y="53" font-size="10">x</text><text x="48" y="9" font-size="10">y</text>
+                    <line x1="15" y1="80" x2="95" y2="20" stroke="#184c78" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="grid-option-item">
+                <strong>D)</strong><br>
+                <svg width="110" height="90" viewBox="0 0 120 100">
+                    <line x1="10" y1="60" x2="110" y2="60" stroke="#333" stroke-width="1.5"/>
+                    <line x1="60" y1="90" x2="60" y2="10" stroke="#333" stroke-width="1.5"/>
+                    <text x="52" y="68" font-size="10">0</text><text x="112" y="63" font-size="10">x</text><text x="58" y="9" font-size="10">y</text>
+                    <line x1="15" y1="15" x2="95" y2="85" stroke="#184c78" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="grid-option-item">
+                <strong>E)</strong><br>
+                <svg width="110" height="90" viewBox="0 0 120 100">
+                    <line x1="10" y1="40" x2="110" y2="40" stroke="#333" stroke-width="1.5"/>
+                    <line x1="60" y1="90" x2="60" y2="10" stroke="#333" stroke-width="1.5"/>
+                    <text x="52" y="48" font-size="10">0</text><text x="112" y="43" font-size="10">x</text><text x="58" y="9" font-size="10">y</text>
+                    <line x1="10" y1="70" x2="110" y2="70" stroke="#184c78" stroke-width="2"/>
+                </svg>
+            </div>
+        </div>
+
+        <ul class="options">
+            <li><label><input type="radio" name="q2" value="A"> A)</label></li>
+            <li><label><input type="radio" name="q2" value="B"> B)</label></li>
+            <li><label><input type="radio" name="q2" value="C"> C)</label></li>
+            <li><label><input type="radio" name="q2" value="D"> D)</label></li>
+            <li><label><input type="radio" name="q2" value="E"> E)</label></li>
+        </ul>
+        <div id="alert-2" class="alert-msg">Por favor, selecione uma alternativa antes de verificar.</div>
+        <div class="feedback" id="feedback-2"></div>
+        <div class="button-group">
+            <button class="btn btn-check" id="btn-check-2" onclick="verificarResposta(2, 'D', 'O gráfico D representa m < 0 (reta decrescente) e n > 0 (corte no eixo y acima da origem).')">Verificar Resposta</button>
+            <button class="btn btn-next" id="btn-next-2" onclick="proximaQuestao(2)">Próxima Questão &rarr;</button>
+        </div>
+    </div>
+
+    <!-- ITEM 3 -->
+    <div class="question-card" id="card-3">
+        <div class="item-tag">ITEM 3 - (AMA 2024 - 3ª ed. - M00087460)</div>
+        <div class="question-text">
+            Durante a realização de uma atividade, um professor de Geometria Analítica distribuiu, para cada um dos alunos, uma carta com uma representação de uma reta em um eixo. Observe, no quadro abaixo, algumas dessas cartas.
+        </div>
+
+        <div class="graph-container" style="overflow-x: auto;">
+            <svg width="650" height="150" viewBox="0 0 650 150">
+                <!-- Carta I -->
+                <g transform="translate(10,10)">
+                    <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
+                    <line x1="10" y1="60" x2="105" y2="60" stroke="#333" stroke-width="1"/>
+                    <line x1="68" y1="110" x2="68" y2="10" stroke="#333" stroke-width="1"/>
+                    <text x="60" y="68" font-size="8">0</text><text x="107" y="63" font-size="8">x</text><text x="66" y="8" font-size="8">y</text>
+                    <line x1="15" y1="20" x2="95" y2="90" stroke="#184c78" stroke-width="2"/>
+                    <text x="55" y="115" font-weight="bold" font-size="12">I</text>
+                </g>
+                <!-- Carta II -->
+                <g transform="translate(135,10)">
+                    <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
+                    <line x1="10" y1="60" x2="105" y2="60" stroke="#333" stroke-width="1"/>
+                    <line x1="55" y1="110" x2="55" y2="10" stroke="#333" stroke-width="1"/>
+                    <text x="47" y="68" font-size="8">0</text><text x="107" y="63" font-size="8">x</text><text x="53" y="8" font-size="8">y</text>
+                    <line x1="15" y1="15" x2="95" y2="85" stroke="#184c78" stroke-width="2"/>
+                    <text x="55" y="115" font-weight="bold" font-size="12">II</text>
+                </g>
+                <!-- Carta III -->
+                <g transform="translate(260,10)">
+                    <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
+                    <line x1="10" y1="50" x2="105" y2="50" stroke="#333" stroke-width="1"/>
+                    <line x1="45" y1="110" x2="45" y2="10" stroke="#333" stroke-width="1"/>
+                    <text x="37" y="58" font-size="8">0</text><text x="107" y="53" font-size="8">x</text><text x="43" y="8" font-size="8">y</text>
+                    <line x1="15" y1="85" x2="95" y2="15" stroke="#184c78" stroke-width="2"/>
+                    <text x="52" y="115" font-weight="bold" font-size="12">III</text>
+                </g>
+                <!-- Carta IV -->
+                <g transform="translate(385,10)">
+                    <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
+                    <line x1="10" y1="70" x2="105" y2="70" stroke="#333" stroke-width="1"/>
+                    <line x1="55" y1="110" x2="55" y2="10" stroke="#333" stroke-width="1"/>
+                    <text x="47" y="78" font-size="8">0</text><text x="107" y="73" font-size="8">x</text><text x="53" y="8" font-size="8">y</text>
+                    <line x1="10" y1="40" x2="105" y2="40" stroke="#184c78" stroke-width="2"/>
+                    <text x="52" y="115" font-weight="bold" font-size="12">IV</text>
+                </g>
+                <!-- Carta V -->
+                <g transform="translate(510,10)">
+                    <rect x="0" y="0" width="115" height="120" fill="#fff" stroke="#999" rx="5"/>
+                    <line x1="10" y1="70" x2="105" y2="70" stroke="#333" stroke-width="1"/>
+                    <line x1="65" y1="110" x2="65" y2="10" stroke="#333" stroke-width="1"/>
+                    <text x="57" y="78" font-size="8">0</text><text x="107" y="73" font-size="8">x</text><text x="63" y="8" font-size="8">y</text>
+                    <line x1="15" y1="100" x2="95" y2="20" stroke="#184c78" stroke-width="2"/>
+                    <text x="55" y="115" font-weight="bold" font-size="12">V</text>
+                </g>
+            </svg>
+        </div>
+
+        <div class="question-text">
+            Rogério recebeu uma carta com a representação de uma reta que tem coeficiente angular positivo (<i>m &gt; 0</i>) e coeficiente linear negativo (<i>n &lt; 0</i>).<br>
+            Qual das cartas apresentadas acima Rogério pode ter recebido?
+        </div>
+        <ul class="options">
+            <li><label><input type="radio" name="q3" value="A"> A) I.</label></li>
+            <li><label><input type="radio" name="q3" value="B"> B) II.</label></li>
+            <li><label><input type="radio" name="q3" value="C"> C) III.</label></li>
+            <li><label><input type="radio" name="q3" value="D"> D) IV.</label></li>
+            <li><label><input type="radio" name="q3" value="E"> E) V.</label></li>
+        </ul>
+        <div id="alert-3" class="alert-msg">Por favor, selecione uma alternativa antes de verificar.</div>
+        <div class="feedback" id="feedback-3"></div>
+        <div class="button-group">
+            <button class="btn btn-check" id="btn-check-3" onclick="verificarResposta(3, 'C', 'A Carta III traz uma reta crescente (m > 0) que cruza o eixo vertical y abaixo do eixo x (n < 0).')">Verificar Resposta</button>
+            <button class="btn btn-next" id="btn-next-3" onclick="proximaQuestao(3)">Próxima Questão &rarr;</button>
+        </div>
+    </div>
+
+    <!-- ITEM 4 -->
+    <div class="question-card" id="card-4">
+        <div class="item-tag">ITEM 4 - (AMA 2024 - 3ª ed. - M00087462)</div>
+        <div class="question-text">
+            Durante uma aula, a professora Márcia apresentou aos seus estudantes duas retas <i>r</i> e <i>s</i>. Ela pediu para que eles fizessem considerações sobre as retas com base em seus coeficientes. Observe abaixo as retas <i>r</i> e <i>s</i> apresentadas e as considerações que 5 alunos fizeram sobre elas.
+        </div>
+
+        <div class="graph-container">
+            <svg class="svg-graph" width="320" height="180" viewBox="0 0 320 180">
+                <line x1="20" y1="100" x2="300" y2="100" stroke="#333" stroke-width="1.5"/>
+                <polygon points="300,97 306,100 300,103" fill="#333"/>
+                <text x="308" y="104" font-size="12">x</text>
+
+                <line x1="160" y1="160" x2="160" y2="20" stroke="#333" stroke-width="1.5"/>
+                <polygon points="157,20 160,14 163,20" fill="#333"/>
+                <text x="153" y="14" font-size="12">y</text>
+
+                <line x1="40" y1="140" x2="270" y2="25" stroke="#184c78" stroke-width="2.5"/>
+                <text x="278" y="25" font-weight="bold" font-size="14" fill="#184c78">r</text>
+
+                <line x1="50" y1="20" x2="250" y2="160" stroke="#d9534f" stroke-width="2.5"/>
+                <text x="256" y="165" font-weight="bold" font-size="14" fill="#d9534f">s</text>
+            </svg>
+        </div>
+
+        <div style="background: #ffffff; padding: 15px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 20px; font-size: 0.95em; line-height: 1.6;">
+            <strong>Eduardo:</strong> O coeficiente angular da reta <i>s</i> é positivo.<br>
+            <strong>Fabiana:</strong> O coeficiente linear da reta <i>s</i> é positivo.<br>
+            <strong>Gabriel:</strong> O coeficiente angular da reta <i>s</i> é maior do que o coeficiente angular da reta <i>r</i>.<br>
+            <strong>Mariana:</strong> Os coeficientes lineares das duas retas são negativos.<br>
+            <strong>Renato:</strong> O coeficiente linear da reta <i>r</i> é maior do que o coeficiente linear da reta <i>s</i>.
+        </div>
+
+        <div class="question-text">
+            Qual desses estudantes fez uma interpretação geométrica coerente dos coeficientes das retas <i>r</i> e <i>s</i>?
+        </div>
+        <ul class="options">
+            <li><label><input type="radio" name="q4" value="A"> A) Eduardo.</label></li>
+            <li><label><input type="radio" name="q4" value="B"> B) Fabiana.</label></li>
+            <li><label><input type="radio" name="q4" value="C"> C) Gabriel.</label></li>
+            <li><label><input type="radio" name="q4" value="D"> D) Mariana.</label></li>
+            <li><label><input type="radio" name="q4" value="E"> E) Renato.</label></li>
+        </ul>
+        <div id="alert-4" class="alert-msg">Por favor, selecione uma alternativa antes de verificar.</div>
+        <div class="feedback" id="feedback-4"></div>
+        <div class="button-group">
+            <button class="btn btn-check" id="btn-check-4" onclick="verificarResposta(4, 'E', 'A reta r corta o eixo y no semi-eixo positivo (n_r > 0) e a reta s corta o eixo y no semi-eixo negativo (n_s < 0). Logo, n_r > n_s (afirmação de Renato).')">Verificar Resposta</button>
+            <button class="btn btn-next" id="btn-next-4" onclick="proximaQuestao(4)">Próxima Questão &rarr;</button>
+        </div>
+    </div>
+
+    <!-- ITEM 5 (FOTOGRAFIA EXATA DA IMAGEM ITEM 5.JPG) -->
+    <div class="question-card" id="card-5">
+        <div class="item-tag">ITEM 5 - (AMA 2024 - 3ª ed. - M00087461)</div>
+        <div class="question-text">
+            Observe o esboço de uma reta <i>r</i> representada no plano cartesiano abaixo.
+        </div>
+
+        <div class="graph-container">
+            <svg class="svg-graph" width="280" height="250" viewBox="0 0 280 250">
+                <!-- Eixo x -->
+                <line x1="20" y1="140" x2="260" y2="140" stroke="#333" stroke-width="1.5"/>
+                <polygon points="260,137 266,140 260,143" fill="#333"/>
+                <text x="268" y="144" font-size="12" font-weight="bold">x</text>
+
+                <!-- Eixo y -->
+                <line x1="100" y1="230" x2="100" y2="20" stroke="#333" stroke-width="1.5"/>
+                <polygon points="97,20 100,14 103,20" fill="#333"/>
+                <text x="94" y="14" font-size="12" font-weight="bold">y</text>
+
+                <text x="86" y="153" font-size="12">0</text>
+
+                <!-- Reta r passando exatamente por (100, 190) [-2 em y] e por (150, 140) [1 em x] -->
+                <line x1="50" y1="240" x2="220" y2="70" stroke="#184c78" stroke-width="2.5"/>
+                <text x="225" y="68" font-weight="bold" font-size="15" fill="#184c78">r</text>
+
+                <!-- Ponto no eixo y: -2 -->
+                <circle cx="100" cy="190" r="4.5" fill="#d9534f"/>
+                <text x="72" y="194" font-size="13" font-weight="bold" fill="#d9534f">-2</text>
+
+                <!-- Ponto no eixo x: 1 -->
+                <circle cx="150" cy="140" r="4.5" fill="#d9534f"/>
+                <text x="148" y="160" font-size="13" font-weight="bold" fill="#d9534f">1</text>
+
+                <!-- Arco e texto do Ângulo de 60° no eixo x (no ponto 1, entre eixo x e reta r) -->
+                <path d="M 175 140 A 25 25 0 0 0 168 122" fill="none" stroke="#333" stroke-width="1.5"/>
+                <text x="176" y="128" font-size="12" font-weight="bold">60°</text>
+
+                <!-- Arco e texto do Ângulo de 30° no eixo y (no ponto -2, entre o eixo y acima de -2 e a reta r que sobe) -->
+                <path d="M 100 165 A 25 25 0 0 1 118 172" fill="none" stroke="#333" stroke-width="1.5"/>
+                <text x="108" y="162" font-size="12">30°</text>
+            </svg>
+        </div>
+
+        <div class="question-text">
+            Os valores do coeficiente linear e do coeficiente angular dessa reta, nessa ordem, são:
+        </div>
+        <ul class="options">
+            <li><label><input type="radio" name="q5" value="A"> a) -2 e 1</label></li>
+            <li><label><input type="radio" name="q5" value="B"> b) -2 e 60º</label></li>
+            <li><label><input type="radio" name="q5" value="C"> c) 1 e tg 60º</label></li>
+            <li><label><input type="radio" name="q5" value="D"> d) -2 e tg 30º</label></li>
+            <li><label><input type="radio" name="q5" value="E"> e) -2 e tg 60º</label></li>
+        </ul>
+        <div id="alert-5" class="alert-msg">Por favor, selecione uma alternativa antes de verificar.</div>
+        <div class="feedback" id="feedback-5"></div>
+        <div class="button-group">
+            <button class="btn btn-check" id="btn-check-5" onclick="verificarResposta(5, 'E', 'O coeficiente linear n é o valor da coordenada y no ponto em que a reta r cruza o eixo vertical (0, -2), ou seja, n = -2. O coeficiente angular m corresponde à tangente do ângulo de inclinação de 60° que a reta forma com o eixo x, isto é, m = tg 60º. Portanto, nessa ordem (linear e angular), os valores são -2 e tg 60º (Alternativa e).')">Verificar Resposta</button>
+            <button class="btn btn-next" id="btn-next-5" onclick="proximaQuestao(5)">Ver Resultado Final &rarr;</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RESULTADOS -->
+    <div id="results-screen">
+        <h2>Parabéns por concluir o Quiz!</h2>
+        <p>Confira o seu desempenho nas questões do descritor D085_M:</p>
+        <div class="score-box" id="final-score">0 / 5</div>
+        <p id="score-percentage" style="font-size: 1.1em; color: #555; margin-bottom: 25px;"></p>
+        <button class="btn-restart" onclick="reiniciarQuiz()">Refazer Quiz</button>
+    </div>
+</div>
+
+<script>
+    let pontuacao = 0;
+    const totalQuestoes = 5;
+
+    function verificarResposta(qNum, respostaCorreta, explicacao) {
+        const radios = document.getElementsByName('q' + qNum);
+        let selecionada = null;
+
+        for (const r of radios) {
+            if (r.checked) {
+                selecionada = r.value;
+                break;
+            }
+        }
+
+        const alertDiv = document.getElementById('alert-' + qNum);
+        if (!selecionada) {
+            alertDiv.style.display = 'block';
+            return;
+        } else {
+            alertDiv.style.display = 'none';
+        }
+
+        for (const r of radios) {
+            r.disabled = true;
+        }
+
+        const feedbackDiv = document.getElementById('feedback-' + qNum);
+        feedbackDiv.style.display = 'block';
+
+        if (selecionada === respostaCorreta) {
+            pontuacao++;
+            feedbackDiv.className = 'feedback correct';
+            feedbackDiv.innerHTML = '<strong>&check; Resposta Correta!</strong><br>' + explicacao;
+        } else {
+            feedbackDiv.className = 'feedback incorrect';
+            feedbackDiv.innerHTML = '<strong>&cross; Incorreto.</strong> A alternativa correta é a <strong>' + respostaCorreta + '</strong>.<br><em>Explicação:</em> ' + explicacao;
+        }
+
+        document.getElementById('btn-check-' + qNum).style.display = 'none';
+        document.getElementById('btn-next-' + qNum).style.display = 'block';
+    }
+
+    function proximaQuestao(qAtual) {
+        document.getElementById('card-' + qAtual).classList.remove('active');
+
+        if (qAtual < totalQuestoes) {
+            const proxima = qAtual + 1;
+            document.getElementById('card-' + proxima).classList.add('active');
+            const pct = (proxima / totalQuestoes) * 100;
+            document.getElementById('progress-bar').style.width = pct + '%';
+        } else {
+            document.getElementById('progress-container').style.display = 'none';
+            const resultsScreen = document.getElementById('results-screen');
+            resultsScreen.style.display = 'block';
+            document.getElementById('final-score').innerText = pontuacao + ' / ' + totalQuestoes;
+            const pctFinal = Math.round((pontuacao / totalQuestoes) * 100);
+            document.getElementById('score-percentage').innerText = 'Você acertou ' + pctFinal + '% do quiz.';
+        }
+    }
+
+    function reiniciarQuiz() {
+        pontuacao = 0;
+        for (let i = 1; i <= totalQuestoes; i++) {
+            const radios = document.getElementsByName('q' + i);
+            for (const r of radios) {
+                r.checked = false;
+                r.disabled = false;
+            }
+            document.getElementById('feedback-' + i).style.display = 'none';
+            document.getElementById('alert-' + i).style.display = 'none';
+            document.getElementById('btn-check-' + i).style.display = 'block';
+            document.getElementById('btn-next-' + i).style.display = 'none';
+            document.getElementById('card-' + i).classList.remove('active');
+        }
+
+        document.getElementById('card-1').classList.add('active');
+        document.getElementById('progress-container').style.display = 'block';
+        document.getElementById('progress-bar').style.width = '20%';
+        document.getElementById('results-screen').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
